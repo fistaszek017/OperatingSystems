@@ -1,3 +1,10 @@
-//
-// Created by abc on 4/7/26.
-//
+#include <stdio.h>
+#include <signal.h>
+
+void sig_mask(void) {
+    printf("Wywołano funkcję 'sig_mask()'\n");
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGUSR1);
+    sigprocmask(SIG_BLOCK, &mask, NULL);
+}
