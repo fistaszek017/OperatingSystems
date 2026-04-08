@@ -2,40 +2,61 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <unistd.h>
+#include <string.h>
 
-#ifdef DYNAMIC
-#include <dlfcn.h>
-#endif
+void signal_handler(int signum) {
+    printf("Wywołano handler dla sygnału %d\n", signum);
+}
 
-void sig_unblock(void);
-void sig_default(void);
-void sig_mask(void);
-void sig_ignore(void);
-void sig_handle(void);
+void sig_default(void) {
+    printf("Wywołano funkcję 'sig_default()'\n");
+    struct sigaction sa;
+    sa.sa_handler = SIG_DFL;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sigaction(SIGUSR1, &sa, NULL);
+}
+
+void sig_mask(void) {
+    printf("Wywołano funkcję 'sig_mask()'\n");
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGUSR1);
+    sigprocmask(SIG_BLOCK, &mask, NULL);
+}
+
+void sig_ignore(void) {
+    printf("Wywołano funkcję 'sig_ignore()'\n");
+    struct sigaction sa;
+    sa.sa_handler = SIG_IGN;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sigaction(SIGUSR1, &sa, NULL);
+}
+
+void sig_handle(void) {
+    printf("Wywołano funkcję 'sig_handle()'\n");
+    struct sigaction sa;
+    sa.sa_handler = signal_handler;
+    sigemptyset(&sa.sa_mask);
+    sa.sa_flags = 0;
+    sigaction(SIGUSR1, &sa, NULL);
+}
+
+void sig_unblock(void) {
+    sigset_t mask;
+    sigemptyset(&mask);
+    sigaddset(&mask, SIGUSR1);
+    sigprocmask(SIG_UNBLOCK, &mask, NULL);
+}
 
 void usr2_handler(int signum, siginfo_t *info, void *context) {
     int typ = info->si_value.sival_int;
 
-#ifdef DYNAMIC
-    void *lib = dlopen("./libsig.so", RTLD_LAZY);
-    if (!lib) { fprintf(stderr, "%s\n", dlerror()); return; }
-
-    char nazwa[32];
-    if      (typ == 1) snprintf(nazwa, sizeof(nazwa), "sig_default");
-    else if (typ == 2) snprintf(nazwa, sizeof(nazwa), "sig_mask");
-    else if (typ == 3) snprintf(nazwa, sizeof(nazwa), "sig_ignore");
-    else if (typ == 4) snprintf(nazwa, sizeof(nazwa), "sig_handle");
-
-    void (*funkcja)(void) = dlsym(lib, nazwa);
-    if (funkcja) funkcja();
-    dlclose(lib);
-#else
-    // statyczna lub współdzielona — zwykłe wywołanie
     if      (typ == 1) sig_default();
     else if (typ == 2) sig_mask();
     else if (typ == 3) sig_ignore();
     else if (typ == 4) sig_handle();
-#endif
 }
 
 int main(void) {
