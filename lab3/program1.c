@@ -47,7 +47,7 @@ int main(void) {
     write(fd_out, &dx, sizeof(double));
     close(fd_out);
 
-    printf("Dane wysłane. Czekam na wynik...\n");
+    printf("Dane wysłane. Czekam na wynik\n");
 
     //otwieram fifo2, czekam na wynik od programu 2
     int fd_in = open(FIFO_TO_RESULT, O_RDONLY);

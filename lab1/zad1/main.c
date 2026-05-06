@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 
 #define M 5
@@ -14,7 +15,7 @@ int zmiennaGlobalna = 2;
 int main (int argc, char *argv[]) {
     int N = atoi(argv[1]);
     for (int i = 0; i < N; i++) {
-        pid_t pid = fork();
+        pid_t pid = vfork();
         if (pid < 0) {
             return 1; //blad
         }

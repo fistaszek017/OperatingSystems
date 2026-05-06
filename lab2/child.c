@@ -17,7 +17,7 @@ void usr2_handler(int signum, siginfo_t *info, void *context) {
     int typ = info->si_value.sival_int;
 
 #ifdef DYNAMIC
-    void *lib = dlopen("./libsig.so", RTLD_LAZY);
+    void *lib = dlopen("./libsignal.so", RTLD_LAZY);
     if (!lib) { fprintf(stderr, "%s\n", dlerror()); return; }
 
     char nazwa[32];

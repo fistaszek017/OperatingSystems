@@ -40,7 +40,6 @@ int main(void) {
     close(fd_in);
 
     printf("Otrzymałem: a=%.6f, b=%.6f, dx=%.10f\n", a, b, dx);
-    printf("Liczę całkę...\n");
 
     double result = integrate(a, b, dx);
 

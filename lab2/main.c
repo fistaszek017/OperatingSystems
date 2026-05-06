@@ -32,7 +32,7 @@ int main(int argc, char *argv[]) {
 
     if (pid == 0) {
         //child
-        execl("./child", "child", NULL);
+        execl("./child_dynamic", "child", NULL);
         perror("execl");
         return 1;
     } else {

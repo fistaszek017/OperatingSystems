@@ -92,16 +92,15 @@ int main(int argc, char *argv[]) {
         for (int i = 0; i < k; i++) {
             double partial = 0.0;
             read(pipes[i][0], &partial, sizeof(double));
-            close(pipes[i][0]);
             total += partial;
+            close(pipes[i][0]);
         }
-
-        /* Poczekaj na wszystkie procesy potomne */
+        gettimeofday(&t_end, NULL);
         for (int i = 0; i < k; i++) {
             wait(NULL);
         }
 
-        gettimeofday(&t_end, NULL);
+
         double elapsed = (t_end.tv_sec  - t_start.tv_sec) +
                          (t_end.tv_usec - t_start.tv_usec) * 1e-6;
 

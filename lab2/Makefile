@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall
+CFLAGS = -Wall -fPIC
 SRCS = sig_default.c sig_mask.c sig_ignore.c sig_handle.c
 OBJS = $(SRCS:.c=.o)
 
@@ -11,7 +11,7 @@ libsig.a: $(OBJS)
 	ar rcs $@ $^
 
 
-libsig.so: $(SRCS)
+libsig.so: $(OBJS)
 	$(CC) $(CFLAGS) -fPIC -shared -o $@ $^
 
 %.o: %.c
@@ -29,10 +29,8 @@ child_shared: child.c libsig.so
 child_dynamic: child.c libsig.so
 	$(CC) $(CFLAGS) -DDYNAMIC -o $@ $< -L. -lsig -ldl
 
-# --- main (jeden dla wszystkich wersji) ---
 main: main.c
 	$(CC) $(CFLAGS) -o main main.c
 
-# --- sprzątanie ---
 clean:
-	rm -f *.o *.a *.so child_static child_shared child_dynamic main
+	rm -f *.o *.a *.so child_static child_shared child_dynamic main child
